@@ -33,3 +33,8 @@ export const postContactUsForm = (req, res) => {
     res.json(401).json({ message: err });
   }
 };
+
+
+export const getContactUsForm = (req,res)=>{
+  res.send("Getting all post")
+}

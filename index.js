@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import contactUsRoute from './routes/contactUsRoute.js'
-
+import userLoginRoute from './routes/admin/userLoginRoute.js'
 
 const app = express();
 
@@ -12,9 +12,13 @@ const app = express();
 dotenv.config();
 
 // Middleware
-app.use(cors({origin:'*'}));
-app.use(express.json())
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors({origin:'*',credentials:true}));
 
+
+
+app.use('/',userLoginRoute)
 app.use('/contactUsForm',contactUsRoute)
 
 // MongoDB connection
