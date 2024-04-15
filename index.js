@@ -5,6 +5,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import contactUsRoute from './routes/contactUsRoute.js'
 import userLoginRoute from './routes/admin/userLoginRoute.js'
+import adminResponseRouter from './routes/admin/adminResponseRoute.js'
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -12,14 +14,23 @@ const app = express();
 dotenv.config();
 
 // Middleware
+app.use(cors({ credentials: true, origin: "*" }));
+app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({extended:true}))
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cors({origin:'*',credentials:true}));
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
 
 
 app.use('/',userLoginRoute)
 app.use('/contactUsForm',contactUsRoute)
+app.use(`/:userId/dashboard`,adminResponseRouter)
 
 // MongoDB connection
 const connect = async () => {
@@ -31,8 +42,24 @@ const connect = async () => {
   }
 };
 
+// HTTPS Options
+const httpsOptions = {
+    // key: fs.readFileSync('/etc/letsencrypt/live/back.shivdas.live/privkey.pem'),
+    // cert: fs.readFileSync('/etc/letsencrypt/live/back.shivdas.live/fullchain.pem')
+};
 
-app.listen(process.env.PORT, () => {
-    connect()
+// Create HTTPS Server
+// const server = https.createServer(httpsOptions, app);
+
+
+app.listen(process.env.PORT, async () => {
+   await connect()
   console.log("Connected to backend port");
 });
+
+
+// Listening to the port
+// server.listen(process.env.PORT, () => {
+//   connect();
+//   console.log("Connected to backend port");
+// });

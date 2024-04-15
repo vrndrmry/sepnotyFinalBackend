@@ -2,10 +2,11 @@ import { compareSync } from "bcrypt";
 import { UserModel } from "../../model/admin/userModel.js";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import cookieParser from "cookie-parser";
 
 export const userLoginController = async (req, res) => {
   const { username, password } = req.body;
-console.log(req.body)
+
   try {
     if (!username || !password) {
       return res.status(402).json({ message: "Fill all details" });
@@ -30,16 +31,25 @@ console.log(req.body)
     }
 
     if(isPasswordCorrect){
-        jwt.sign(payload,"secret",(err,token)=>{
-            if(err){
-                return res.status(400).json(err)
-            }else{
-                res.cookie("token",token).json({
-                    id:user._id,
-                    username
-                })
-            }
-        })
+         jwt.sign(
+           payload,
+           "secret",
+           { expiresIn: "1d"},
+           async (err, token) => {
+             if (err) {
+               return res.status(400).json(err);
+             } 
+               return res
+                 .status(200)
+                 .cookie("token", token, { httpOnly: true, expiresIn:'15m' })
+                 .json({
+                   id: user._id,
+                   username,
+                   token
+                 });
+             
+           }
+         );
     }
   } catch (err) {
     res
