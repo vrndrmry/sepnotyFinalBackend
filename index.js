@@ -46,8 +46,8 @@ const connect = async () => {
 
 // HTTPS Options
 const httpsOptions = {
-    // key: fs.readFileSync('/etc/letsencrypt/live/back.shivdas.live/privkey.pem'),
-    // cert: fs.readFileSync('/etc/letsencrypt/live/back.shivdas.live/fullchain.pem')
+  // key: fs.readFileSync('/etc/letsencrypt/live/backend.sepnoty.com/privkey.pem'),
+  // cert: fs.readFileSync('/etc/letsencrypt/live/backend.sepnoty.com/fullchain.pem')
 };
 
 // Create HTTPS Server
