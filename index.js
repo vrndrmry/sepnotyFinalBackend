@@ -51,17 +51,17 @@ const httpsOptions = {
 };
 
 // Create HTTPS Server
-// const server = https.createServer(httpsOptions, app);
+const server = https.createServer(httpsOptions, app);
 
 
-app.listen(process.env.PORT, async () => {
-   await connect()
-  console.log("Connected to backend port");
-});
+// app.listen(process.env.PORT, async () => {
+//    await connect()
+//   console.log("Connected to backend port");
+// });
 
 
 // Listening to the port
-// server.listen(process.env.PORT, () => {
-//   connect();
-//   console.log("Connected to backend port");
-// });
+server.listen(process.env.PORT, () => {
+  connect();
+  console.log("Connected to backend port");
+});
