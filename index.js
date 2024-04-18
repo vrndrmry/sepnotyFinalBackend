@@ -16,14 +16,14 @@ const app = express();
 dotenv.config();
 
 // Middleware
-// app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-app.use(cors({ credentials: true, origin: "*" }));
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({extended:true}))
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(cors({ credentials: true, origin: true }));
+server.use(cors({ credentials: true, origin: "*" }));
+server.use(cookieParser());
+server.use(express.json());
+server.use(express.urlencoded({extended:true}))
+server.use(bodyParser.urlencoded({ extended: true }));
 
-app.use((req, res, next) => {
+server.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -31,9 +31,9 @@ app.use((req, res, next) => {
 });
 
 
-app.use('/',userLoginRoute)
-app.use('/contactUsForm',contactUsRoute)
-app.use(`/:userId/dashboard`,adminResponseRouter)
+server.use('/',userLoginRoute)
+server.use('/contactUsForm',contactUsRoute)
+server.use(`/:userId/dashboard`,adminResponseRouter)
 
 // MongoDB connection
 const connect = async () => {
