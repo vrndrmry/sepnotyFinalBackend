@@ -9,19 +9,35 @@ export const responsesRecievedController = (req, res) => {
   if (token) {
     jwt.verify(token, "secret", async (err, info) => {
       if (err) {
-        throw err;
+        return res.status(401).json({ message: "Unauthorised Access" });
       }
       const { userId } = req.params;
-      const userVerification = await UserModel.findOne({_id:userId});
-      
-      if(!userVerification){
-          return res.status(401).json({message:"Unauthorised Access"})
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorised Access" });
       }
-      if(userVerification){
-          const recievedData = await contactUsModel
-            .find()
-            .sort({ createdAt: -1 });
-          return res.status(200).send(recievedData);
+      const userVerification = await UserModel.findOne({ _id: userId });
+
+      if (!userVerification) {
+        return res.status(401).json({ message: "Unauthorised Access" });
+      }
+      const page = parseInt(req.query.page) || 1;
+      const pageSize = 6;
+      const skip = (page - 1) * pageSize;
+      const limit = 6;
+
+      const totalDocuments=await contactUsModel.countDocuments();
+      if (userVerification) {
+        const recievedData = await contactUsModel
+          .find()
+          .sort({ createdAt: -1 })
+          .limit(limit)
+          .skip(skip);
+      
+        return res.status(200).json({
+          recievedData,
+          itemsPerPage:pageSize,
+          total:Math.ceil(totalDocuments/pageSize),
+        });
       }
     });
   }
