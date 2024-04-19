@@ -11,11 +11,20 @@ const UserSchema = new mongoose.Schema({
         description:"Password of user ",
         required:true
     },
+    blogs: [
+        {
+            type:mongoose.Types.ObjectId,
+            ref:"BlogModel",
+        }
+    ],
+      
+    
     admin:{
         type:Boolean,
         description:"Admin access",
         default:false
     }
+
 },{timestamps:true})
 
 export const UserModel = mongoose.model("UserModel",UserSchema)
