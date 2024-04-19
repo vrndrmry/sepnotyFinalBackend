@@ -8,17 +8,20 @@ export const createArticle = async (req, res) => {
     if (!decodedData) {
       return res.status(401).json({ message: "Unauthorised Access" });
     }
-    const { title, content, author, imageUrl } = req.body;
+    const { title, content } = req.body;
+    let imageUrl = req.file;
+    const b64 = Buffer.from(imageUrl.buffer).toString("base64");
+    let dataURI = `data:${imageUrl.mimetype};base64,${b64}`;
     const aricle = await ArticleModel.create({
       title,
       content,
-      imageUrl,
+      imageUrl: dataURI,
       author: decodedData.username,
       user: decodedData.id,
-    }); 
+    });
     if (!aricle) {
       return res.status(401).json({ message: "Unauthorised Access" });
-    } 
+    }
     return res
       .status(200)
       .json({ message: "Article created successfully", success: true });
@@ -28,7 +31,6 @@ export const createArticle = async (req, res) => {
 };
 
 export const fetchMyArticles = async (req, res) => {
-  console.log("callwed");
   try {
     const token = req.cookies.token;
     const decodedData = await jwt.verify(token, "secret");
@@ -58,7 +60,7 @@ export const fetchMyArticles = async (req, res) => {
       itemsPerPage: pageSize,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message});
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -73,7 +75,18 @@ export const updateArticle = async (req, res) => {
     if (!articleId) {
       return res.status(401).json({ message: "Article not found" });
     }
-    const article = await ArticleModel.findByIdAndUpdate(articleId, req.body, {
+    const data = {
+      title: req.body.title,
+      content: req.body.content,
+    };
+    let imageUrl = req.file;
+    if (imageUrl) {
+      const b64 = Buffer.from(imageUrl.buffer).toString("base64");
+      let dataURI = `data:${imageUrl.mimetype};base64,${b64}`;
+      data.imageUrl = dataURI;
+    }
+
+    const article = await ArticleModel.findByIdAndUpdate(articleId, data, {
       new: true,
     });
     if (!article) {
