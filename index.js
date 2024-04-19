@@ -6,6 +6,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import contactUsRoute from './routes/contactUsRoute.js'
 import userLoginRoute from './routes/admin/userLoginRoute.js'
+import blogRoutes from "./routes/blogRoutes.js"
 import adminResponseRouter from './routes/admin/adminResponseRoute.js'
 import cookieParser from "cookie-parser";
 import articleRoute from './routes/articleRoute.js'
@@ -17,10 +18,6 @@ const app = express();
 dotenv.config();
 
 // Middleware
-
-// app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
-// app.use(cors({ credentials: true, origin: true }));
-
 
 app.use(cors({ credentials: true, origin: "*" }));
 
@@ -39,10 +36,11 @@ app.use((req, res, next) => {
 
 app.use('/',userLoginRoute)
 app.use('/contactUsForm',contactUsRoute)
+app.use("/blog",blogRoutes)
 app.use(`/:userId/dashboard`,adminResponseRouter)
 app.use(`/article`,articleRoute)
 
-// MongoDB connection 
+
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO);
@@ -62,14 +60,14 @@ const httpsOptions = {
 const server = https.createServer(httpsOptions, app);
 
 
-// app.listen(process.env.PORT, async () => {
-//    await connect()
-//   console.log("Connected to backend port");
-// });
+app.listen(process.env.PORT, async () => {
+   await connect()
+  console.log("Connected to backend port");
+});
 
 
 // Listening to the port
-server.listen(process.env.PORT, () => {
-  connect();
-  console.log("Connected to backend port");
-});
+// server.listen(process.env.PORT, () => {
+//   connect();
+//   console.log("Connected to backend port");
+// });
