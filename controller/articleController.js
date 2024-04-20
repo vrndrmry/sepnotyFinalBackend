@@ -1,7 +1,7 @@
 import { ArticleModel } from "../model/articleModel.js";
 import jwt from "jsonwebtoken";
-
-export const createArticle = async (req, res) => {
+import {UserModel} from '../model/admin/userModel.js'
+ export const createArticle = async (req, res) => {
   try {
     const token = req.cookies.token;
     const decodedData = await jwt.verify(token, "secret");
@@ -22,6 +22,13 @@ export const createArticle = async (req, res) => {
     if (!aricle) {
       return res.status(401).json({ message: "Unauthorised Access" });
     }
+    await UserModel.findByIdAndUpdate(
+      decodedData.id,
+      {
+        $push: { articles: aricle._id },
+      },
+      { new: true }
+    );
     return res
       .status(200)
       .json({ message: "Article created successfully", success: true });
